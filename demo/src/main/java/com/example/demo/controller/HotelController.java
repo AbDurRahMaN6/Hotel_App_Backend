@@ -109,19 +109,43 @@ public class HotelController {
         }
     }
 
+//    @PostMapping("/hotels/{hotelId}/rooms")
+//    public ResponseEntity<HotelDetails> createRoomsForHotel(
+//            @PathVariable("hotelId") String hotelId, @RequestBody List<Rooms> rooms){
+//        try {
+//            Optional<HotelDetails> optionalHotel = hotelRepository.findById(hotelId);
+//            if (optionalHotel.isPresent()) {
+//                HotelDetails hotel = optionalHotel.get();
+//                hotel.getRooms().addAll(rooms);hotelRepository.save(hotel);
+//                return new ResponseEntity<>(hotel, HttpStatus.CREATED);
+//            }else {
+//                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+//            }
+//        } catch (Exception e){
+//            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
+
     @PostMapping("/hotels/{hotelId}/rooms")
     public ResponseEntity<HotelDetails> createRoomsForHotel(
-            @PathVariable("hotelId") String hotelId, @RequestBody List<Rooms> rooms){
+            @PathVariable("hotelId") String hotelId, @RequestBody List<Rooms> rooms) {
         try {
             Optional<HotelDetails> optionalHotel = hotelRepository.findById(hotelId);
             if (optionalHotel.isPresent()) {
                 HotelDetails hotel = optionalHotel.get();
-                hotel.getRooms().addAll(rooms);hotelRepository.save(hotel);
+
+                for (Rooms room : rooms) {
+                    room.setAvailable(false);  // Set initial availability as "not available"
+                    room.setBookings(new ArrayList<>());  // Initialize the bookings list
+                }
+
+                hotel.getRooms().addAll(rooms);
+                hotelRepository.save(hotel);
                 return new ResponseEntity<>(hotel, HttpStatus.CREATED);
-            }else {
+            } else {
                 return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -199,7 +223,7 @@ public class HotelController {
     }
 
     // Book a room
-    @PostMapping("/hotels/{id}/rooms/roomNumber/bookings")
+    @PostMapping("/hotels/{hotelId}/rooms/{roomNumber}/bookings")
     public ResponseEntity<String> bookRoom(
             @PathVariable String hotelId,
             @PathVariable String roomNumber,

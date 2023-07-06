@@ -1,6 +1,4 @@
 
-h
-8demo/src/main/java/com/example/demo/models/UserRole.java,a\e\ae73e1b00ca9db050019cc4870f4bd9ab6813497
 u
 Edemo/src/main/java/com/example/demo/payload/request/LoginRequest.java,9\f\9f0fbf3f2c4c76c5897ba3b37ddeba190a73f689
 v
@@ -23,3 +21,5 @@ Cdemo/src/main/java/com/example/demo/repository/HotelRepository.java,3\1\31a5b2
 demo/pom.xml,f\1\f1bf400bc0784549511ea07030d3a798eb8c0511
 r
 Bdemo/src/main/java/com/example/demo/repository/RoleRepository.java,b\a\bad7f71236a1f32b79dc7b7c038fc137763f82a1
+o
+?demo/src/main/java/com/example/demo/request/BookingRequest.java,0\b\0bfc0b3ee39db5a3bad855a3a18b898ad9a979ed
