@@ -15,11 +15,6 @@ public class PaymentController {
 
     @Autowired
     PaymentRepository paymentRepository;
-//    @PostMapping
-//    public ResponseEntity<Payment> processPayment(@RequestBody Payment payment) {
-//        Payment savedPayment = paymentRepository.save(payment);
-//        return ResponseEntity.status(HttpStatus.CREATED).body(savedPayment);
-//    }
 
     @PostMapping("/payment/create")
     public ResponseEntity<String> createPayment(@RequestBody Payment payment) {

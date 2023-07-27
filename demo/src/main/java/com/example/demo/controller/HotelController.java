@@ -109,22 +109,6 @@ public class HotelController {
         }
     }
 
-//    @PostMapping("/hotels/{hotelId}/rooms")
-//    public ResponseEntity<HotelDetails> createRoomsForHotel(
-//            @PathVariable("hotelId") String hotelId, @RequestBody List<Rooms> rooms){
-//        try {
-//            Optional<HotelDetails> optionalHotel = hotelRepository.findById(hotelId);
-//            if (optionalHotel.isPresent()) {
-//                HotelDetails hotel = optionalHotel.get();
-//                hotel.getRooms().addAll(rooms);hotelRepository.save(hotel);
-//                return new ResponseEntity<>(hotel, HttpStatus.CREATED);
-//            }else {
-//                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-//            }
-//        } catch (Exception e){
-//            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
 
     @PostMapping("/hotels/{hotelId}/rooms")
     public ResponseEntity<HotelDetails> createRoomsForHotel(
@@ -135,8 +119,8 @@ public class HotelController {
                 HotelDetails hotel = optionalHotel.get();
 
                 for (Rooms room : rooms) {
-                    room.setAvailable(false);  // Set initial availability as "not available"
-                    room.setBookings(new ArrayList<>());  // Initialize the bookings list
+                    room.setAvailable(false);
+                    room.setBookings(new ArrayList<>());
                 }
 
                 hotel.getRooms().addAll(rooms);
@@ -222,7 +206,8 @@ public class HotelController {
         }
     }
 
-    // Book a room
+
+
     @PostMapping("/hotels/{hotelId}/rooms/{roomNumber}/bookings")
     public ResponseEntity<String> bookRoom(
             @PathVariable String hotelId,
@@ -233,8 +218,10 @@ public class HotelController {
         if (hotel.isPresent()) {
             List<Rooms> rooms = hotel.get().getRooms();
             Optional<Rooms> room = rooms.stream().filter(r -> r.getRoomNumber().equals(roomNumber)).findFirst();
-//                    getId().equals(roomId)).findFirst();
+
             if (room.isPresent()) {
+                removeExpiredBookings(room.get());
+
                 if (isRoomAvailable(room.get(), booking.getStartDate(), booking.getEndDate())) {
                     room.get().getBookings().add(booking);
                     hotelRepository.save(hotel.get());
@@ -247,14 +234,18 @@ public class HotelController {
         return ResponseEntity.notFound().build();
     }
 
-    // Helper method to check room availability for booking dates
+    private void removeExpiredBookings(Rooms room) {
+        List<Booking> bookings = room.getBookings();
+        bookings.removeIf(booking -> booking.getEndDate().isBefore(LocalDate.now()));
+    }
+
     private boolean isRoomAvailable(Rooms room, LocalDate startDate, LocalDate endDate) {
         for (Booking booking : room.getBookings()) {
             if (startDate.isBefore(booking.getEndDate()) && endDate.isAfter(booking.getStartDate())) {
-                return false; // Room is already booked for some or all of the requested dates
+                return false;
             }
         }
-        return true; // Room is available for booking
+        return true;
     }
 
 }
